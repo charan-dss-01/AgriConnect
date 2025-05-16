@@ -1,0 +1,401 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+:root {
+  --gradient-shadow: linear-gradient(45deg,
+      #fb0094,
+      #0000ff,
+      #00ff00,
+      #ffff00,
+      #ff0000,
+      #fb0094,
+      #0000ff,
+      #00ff00,
+      #ffff00,
+      #ff0000);
+}
+
+
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #161616;
+}
+
+.chat-container {
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+
+}
+
+div#response-block {
+  padding-bottom: 100px;
+}
+
+
+.middle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.suggestions {
+  border: 1px solid #7A808C;
+  color: #7A808C;
+  padding: 8px 41px 10px 23px;
+  border-radius: 23px;
+  margin: 7px 0;
+  width: 64%;
+  cursor: pointer;
+  position: relative;
+}
+
+.arrow {
+  position: absolute;
+  right: 24px;
+  top: 14px;
+}
+
+.suggestions .arrow img {
+  width: 12px;
+
+}
+
+.new {
+  background: radial-gradient(circle at 100% 100%, #161616 0, #161616 24.5px, transparent 24.5px) 0% 0%/25px 25px no-repeat,
+    radial-gradient(circle at 0 100%, #161616 0, #161616 24.5px, transparent 24.5px) 100% 0%/25px 25px no-repeat,
+    radial-gradient(circle at 100% 0, #161616 0, #161616 24.5px, transparent 24.5px) 0% 100%/25px 25px no-repeat,
+    radial-gradient(circle at 0 0, #161616 0, #161616 24.5px, transparent 24.5px) 100% 100%/25px 25px no-repeat,
+    linear-gradient(#161616, #161616) 50% 50%/calc(100% - 1px) calc(100% - 50px) no-repeat,
+    linear-gradient(#161616, #161616) 50% 50%/calc(100% - 50px) calc(100% - 1px) no-repeat,
+    linear-gradient(149deg, #ca89e8 34%, #4a3aff 79%);
+  border-radius: 25px;
+}
+
+.select-container {
+  right: 13px;
+  top: -100px;
+  position: fixed;
+  /* Start off-screen */
+  transition: top 1s ease;
+}
+
+.select-container.show {
+  top: 50px;
+  /* Final position when visible */
+}
+
+select#languages {
+  background: transparent;
+  color: #fff;
+  width: 204px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+label {
+  color: #f8da63;
+  font-size: 11px;
+  display: block;
+  margin-bottom: 5px;
+
+}
+
+.bottom {
+  background-color: #0A0A0A;
+  color: #ffffff;
+  padding: 10px;
+  justify-content: center;
+  padding: 13px 20px 13px 20px;
+  position: fixed;
+  bottom: 10px;
+  left: 8px;
+  right: 0;
+  max-width: 90%;
+  margin: auto;
+  border-radius: 20px;
+}
+
+.top-container p {
+  margin: 5px;
+}
+
+.suggestions div p {
+  margin: 6px;
+  font-size: 12px;
+}
+
+.suggestion-title {
+  font-weight: 600;
+}
+
+.bottom input {
+  height: 46px;
+  background-color: transparent;
+  border: 1px solid #7A808C;
+  border-radius: 45px;
+  outline: none;
+  padding-left: 20px;
+  color: #7A808C;
+  width: 100%;
+
+}
+
+img.chat-send {
+  background: #F8DA64;
+  padding: 13px;
+  border-radius: 39px;
+  width: 23px;
+  margin-left: 7px;
+  cursor: pointer;
+}
+
+.each-response-block {
+  background: #3442D9;
+  padding: 12px;
+  border-radius: 30px 30px 30px 0px;
+  padding-left: 27px;
+  margin-right: 18px;
+  margin-top: 20px;
+}
+
+.hide-on .powered-by {
+  margin-top: 10px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.gemini {
+  color: #416CC8;
+}
+
+img.gemini {
+  margin-left: 1px;
+  width: 12px;
+  padding-top: 3px;
+  vertical-align: bottom;
+}
+
+.bot-interaction-started {
+  position: relative;
+  -webkit-animation: floatBubble 2s infinite normal ease-out;
+  animation: floatBubble 1s normal ease-out;
+  animation-fill-mode: forwards;
+  margin-bottom: 0px !important;
+
+}
+
+@keyframes floatBubble {
+  0% {
+    top: 50px;
+    width: 100px;
+  }
+
+  100% {
+    width: 80px;
+    top: -12px;
+  }
+
+
+}
+
+.each-response-block p {
+  margin: 0;
+}
+
+p.question-heading {
+  margin-bottom: 0px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.question-content {
+  font-size: 11px;
+}
+
+
+.main-answer-block .each-response-block {
+  background: #0F0F0F;
+
+  margin-left: 23px;
+  margin-top: 23px;
+  border-radius: 30px 30px 30px 0px;
+  word-break: break-all;
+  /* position: relative; */
+}
+
+.hide-on {
+  text-align: center;
+}
+
+.main-answer-block .each-response-block h2 {
+  font-size: 14px;
+}
+
+.main-answer-block .each-response-block pre {
+  max-width: 90%;
+}
+
+.main-answer-block .each-response-block p {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 300;
+  margin-bottom: 12px;
+}
+
+.main-answer-block .each-response-block li {
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.main-answer-block .each-response-block a {
+  color: #F8DA64;
+}
+
+.question-heading::first-letter {
+  text-transform: uppercase;
+
+}
+
+.welcom-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 27px;
+}
+
+.welcom-screen p {
+  margin-top: 4px;
+  font-size: 22px;
+  margin-bottom: 11px;
+
+}
+
+.sarah {
+  background: rgb(232, 160, 137);
+  /* background: linear-gradient(143deg, rgb(9, 7, 7) 59%, rgba(97, 42, 116, 1) 100%); */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  text-transform: capitalize;
+
+}
+
+img.bot-img {
+  margin-bottom: 20px;
+  width: 100px;
+}
+
+/* img.img-fluid.chatbot-icon {
+  position: absolute;
+  left: 17px;
+} */
+
+.main-question-block {
+  display: flex;
+  margin-left: 27px;
+}
+
+form {
+  margin-bottom: 0;
+  display: flex;
+}
+
+.response-submit {
+  background: none;
+  border: none;
+}
+
+.post {
+  width: 220px;
+  height: 80px;
+  padding-left: 30px;
+  padding-top: 10px;
+}
+
+
+.post .line {
+  float: left;
+  width: 140px;
+  height: 16px;
+  margin-top: 12px;
+  border-radius: 7px;
+  background-image: linear-gradient(90deg, #000000 0px, rgba(109, 108, 108, 0.8) 40px, #000000 80px);
+  background-size: 600px;
+  animation: shine-lines 1.5s infinite ease-out;
+}
+
+.post .line.first {
+  width: 140px;
+}
+
+.post .line.second {
+  width: 160px;
+}
+
+.post .line.third {
+  width: 190px;
+}
+
+.post .line.fourth {
+  width: 220px;
+}
+
+.post .avatar+.line {
+  margin-top: 11px;
+  width: 100px;
+}
+
+.post .line~.line {
+  background-color: #000;
+}
+
+.suggestion-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+  height: 30px;
+  /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: #000;
+  /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #F8DA64;
+  /* color of the scroll thumb */
+  border-radius: 20px;
+  /* roundness of the scroll thumb */
+  border: 3px solid #000;
+  /* creates padding around scroll thumb */
+}
+
+@keyframes shine-lines {
+  0% {
+    background-position: -100px;
+  }
+
+  40%,
+  100% {
+    background-position: 220px;
+  }
+}
+
+@media only screen and (max-width:576px) {
+
+  .top-container {
+    position: absolute;
+    width: 100%;
+    top: -46px;
+  }
+
+}
