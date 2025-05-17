@@ -168,7 +168,7 @@ export default function Header() {
                                 <li className="m-2 lg:hidden">
                                     <button
                                         onClick={handleLogout}
-                                        className="block py-2 px-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300 lg:p-0"
+                                        className="w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
                                     >
                                         Logout
                                     </button>
