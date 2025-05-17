@@ -11,29 +11,32 @@ const FarmerOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    console.log(profile);
-    console.log(profile?.user?._id);
+
     // Function to fetch farmer's orders
     const fetchFarmerOrders = async (farmerId) => {
         try {
             const response = await axios.get(`${API_BASE_URL}/api/order/orders/get/${farmerId}`);
-            console.log('Fetched Orders:', response.data); // Log the entire response
-            return response.data.orders; // Return the orders from the response
+            console.log('Fetched Orders:', response.data);
+            return response.data.orders;
         } catch (error) {
             console.error('Error fetching farmer orders:', error);
             console.error('Error Response:', error.response ? error.response.data : 'No response');
-            throw error; // Rethrow the error to be handled later
+            throw error;
         }
     };
 
     // Function to mark an order as delivered
     const markAsDelivered = async (orderId) => {
-        console.log(`Marking order ${orderId} as delivered for farmer ${profile._id}`);
         try {
-            const response = await axios.patch(`${API_BASE_URL}/api/order/orders/gets/${profile._id}/${orderId}`);
+            const farmerId = profile?._id || profile?.user?._id;
+            if (!farmerId) {
+                toast.error("Unable to identify farmer");
+                return;
+            }
+            
+            const response = await axios.patch(`${API_BASE_URL}/api/order/orders/gets/${farmerId}/${orderId}`);
             console.log('Order marked as delivered:', response.data);
             
-            // Update the state to reflect the change
             setOrders((prevOrders) =>
                 prevOrders.map((order) =>
                     order._id === orderId ? { ...order, status: 'Completed' } : order
@@ -42,34 +45,51 @@ const FarmerOrders = () => {
             toast.success("Product Delivered.");
         } catch (error) {
             console.error('Error marking order as delivered:', error);
+            toast.error("Failed to mark order as delivered");
         }
     };
     
     useEffect(() => {
         const getOrders = async () => {
-            console.log('Profile:', profile); // Log the profile to ensure it's correct
-            if (!profile || !profile._id) return; // Check if profile and ID are available
+            if (!profile) {
+                setLoading(true);
+                return;
+            }
+
             try {
-                const idToFetch = profile?._id || profile.user?._id;
-                
-                const fetchedOrders = await fetchFarmerOrders(idToFetch);
+                const farmerId = profile?._id || profile?.user?._id;
+                if (!farmerId) {
+                    setError('Farmer ID not found');
+                    setLoading(false);
+                    return;
+                }
 
-
-                // Sort orders to have undelivered ones first
+                const fetchedOrders = await fetchFarmerOrders(farmerId);
                 const sortedOrders = fetchedOrders.sort((a, b) => (a.status === 'Completed' ? 1 : -1));
                 setOrders(sortedOrders);
+                setError(null);
             } catch (err) {
                 setError('Failed to fetch orders');
+                toast.error("Failed to fetch orders");
             } finally {
                 setLoading(false);
             }
         };
 
         getOrders();
-    }, [profile]); // Dependency on profile to refetch if it changes
+    }, [profile]);
 
-    if (loading) return <div className="text-center py-4">Loading...</div>;
-    if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
+    if (!profile) {
+        return <div className="text-center py-4">Loading profile...</div>;
+    }
+
+    if (loading) {
+        return <div className="text-center py-4">Loading orders...</div>;
+    }
+
+    if (error) {
+        return <div className="text-center py-4 text-red-500">{error}</div>;
+    }
 
     return (
         <div className="min-h-screen container mx-auto p-4 bg-white">
