@@ -1,12 +1,16 @@
 import React from 'react';
 import { useAuth } from '../context/AuthProvider';
 
-export default function MyProfile() {
+export default function MyProfile({ sidebarOpen }) {
   const { profile } = useAuth();
-  console.log(profile);
+
   // Show loading message if profile data is not available yet
   if (!profile) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center text-orange-500 font-semibold">Loading profile...</div>
+      </div>
+    );
   }
 
   // Destructure profile with fallback values to prevent accessing undefined properties
@@ -20,51 +24,51 @@ export default function MyProfile() {
   } = profile;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-50 via-white to-orange-100">
-      <div className="relative bg-white shadow-2xl rounded-3xl p-8 max-w-lg w-full transition-all duration-500 transform hover:scale-105 hover:shadow-[0_15px_30px_rgba(0,0,0,0.3)]">
-        {/* Glowing Effect around the card */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-green-300 via-white to-orange-300 blur-lg opacity-30"></div>
-
+    <div className="flex items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-orange-100">
         {/* Profile Picture */}
-        <div className="flex justify-center mb-6 relative">
-          <img
-            src={profile?.user?.photo?.url || profile?.photo?.url}
-            alt="Profile"
-            className="w-40 h-40 rounded-full  border-4 border-green-600 shadow-lg"
-          />
-        </div>
-        
-        {/* User Information */}
-        <h1 className="text-4xl font-extrabold text-center text-green-700 mb-2 tracking-wider">{name}</h1>
-        <p className="text-center text-lg text-gray-600 font-semibold mb-6 tracking-wide">
-          <span className="text-orange-600 uppercase font-semibold">Role: {profile?.role||profile?.user?.role}</span>
-        </p>
-        
-        <div className="space-y-5 text-lg">
-          {/* Email */}
-          <div className="flex justify-between items-center text-green-700 font-medium tracking-wide">
-            <span className="uppercase">Email:</span>
-            <span className="text-gray-900 font-semibold">{profile?.email||profile?.user?.email}</span>
-          </div>
-
-          {/* Phone */}
-          <div className="flex justify-between items-center text-green-700 font-medium tracking-wide">
-            <span className="uppercase">Phone:</span>
-            <span className="text-gray-900 font-semibold">{profile?.phone||profile?.user?.phone}</span>
-          </div>
-
-          {/* Joined Date */}
-          <div className="flex justify-between items-center text-green-700 font-medium tracking-wide">
-            <span className="uppercase">Joined:</span>
-            <span className="text-gray-900 font-semibold">{new Date(createdAt).toLocaleDateString()}</span>
+        <div className="flex justify-center pt-8">
+          <div className="">
+            <img
+              src={profile?.user?.photo?.url || profile?.photo?.url}
+              alt="Profile"
+              className="w-32 h-32 rounded-full border-4 border-orange-400 shadow-lg object-cover"
+            />
           </div>
         </div>
 
-        {/* Decorative Divider */}
-        <div className="mt-8 border-t-2 border-dashed border-orange-500"></div>
+        {/* User Info */}
+        <div className="text-center mt-4 px-6">
+          <h1 className="text-2xl font-bold text-gray-800">{name}</h1>
+          <p className="text-orange-600 font-semibold mt-1">{profile?.role || profile?.user?.role}</p>
+        </div>
 
-        {/* Soft Glowing Effect in the bottom */}
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-transparent via-green-100 to-transparent"></div>
+        {/* Details */}
+        <div className="mt-8 space-y-4 px-6 pb-8">
+          <div className="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
+            <div className="flex-1">
+              <p className="text-sm text-orange-600 font-medium">Email</p>
+              <p className="text-gray-800 font-medium mt-1">{profile?.email || profile?.user?.email}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
+            <div className="flex-1">
+              <p className="text-sm text-orange-600 font-medium">Phone</p>
+              <p className="text-gray-800 font-medium mt-1">{profile?.phone || profile?.user?.phone}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
+            <div className="flex-1">
+              <p className="text-sm text-orange-600 font-medium">Joined</p>
+              <p className="text-gray-800 font-medium mt-1">{new Date(createdAt).toLocaleDateString()}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Decorative bottom border */}
+        <div className="h-2 bg-gradient-to-r from-orange-400 to-orange-600"></div>
       </div>
     </div>
   );
