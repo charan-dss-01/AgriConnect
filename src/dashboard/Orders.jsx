@@ -6,6 +6,7 @@ import { FaShoppingCart, FaTag, FaCheckCircle, FaTrash, FaStar } from 'react-ico
 import 'animate.css';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { API_BASE_URL } from '../config';
+
 const Orders = ({ sidebarOpen }) => {
     const { profile } = useAuth();
     const [orders, setOrders] = useState([]);
@@ -14,8 +15,20 @@ const Orders = ({ sidebarOpen }) => {
 
     useEffect(() => {
         const fetchOrders = async () => {
+            if (!profile) {
+                setLoading(true);
+                return;
+            }
+
             try {
-                const response = await axios.get(`${API_BASE_URL}/api/order/orderget/${profile._id}`);
+                const userId = profile?._id || profile?.user?._id;
+                if (!userId) {
+                    toast.error('User ID not found');
+                    setLoading(false);
+                    return;
+                }
+
+                const response = await axios.get(`${API_BASE_URL}/api/order/orderget/${userId}`);
                 setOrders(response.data.orders);
                 setLoading(false);
             } catch (error) {
@@ -25,15 +38,21 @@ const Orders = ({ sidebarOpen }) => {
         };
 
         fetchOrders();
-    }, [profile._id]);
+    }, [profile]);
 
     // Function to remove an order
     const removeOrder = async (orderId) => {
         try {
+            const userId = profile?._id || profile?.user?._id;
+            if (!userId) {
+                toast.error('User ID not found');
+                return;
+            }
+
             await axios.delete(`${API_BASE_URL}/api/order/orders/remove/${orderId}`, {
-                data: { userId: profile._id }, // Send userId in request body
+                data: { userId },
             });
-            setOrders(orders.filter(order => order._id !== orderId)); // Update local state
+            setOrders(orders.filter(order => order._id !== orderId));
             toast.success('Order removed successfully.');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Error removing order.');
@@ -46,6 +65,14 @@ const Orders = ({ sidebarOpen }) => {
         if (a.status !== 'Delivered' && b.status === 'Delivered') return -1;
         return 0;
     });
+
+    if (!profile) {
+        return (
+            <div className={`flex justify-center container mx-auto my-12 p-4 animate__animated animate__fadeIn ${sidebarOpen ? 'ml-64' : ''}`}>
+                <div className="text-center text-orange-500 font-semibold">Loading profile...</div>
+            </div>
+        );
+    }
 
     return (
         <div className={`flex justify-center container mx-auto my-12 p-4 animate__animated animate__fadeIn ${sidebarOpen ? 'ml-64' : ''}`}>
