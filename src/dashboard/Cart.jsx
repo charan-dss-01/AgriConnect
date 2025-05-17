@@ -8,22 +8,37 @@ const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [address, setAddress] = useState('');
     const [showAddressForm, setShowAddressForm] = useState(false);
-    const [currentItem, setCurrentItem] = useState(null);  // Track the item being ordered
+    const [currentItem, setCurrentItem] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCartItems = async () => {
+            if (!profile) {
+                setLoading(true);
+                return;
+            }
+
             try {
-                await fetchCart(profile._id);
+                const userId = profile?._id || profile?.user?._id;
+                if (!userId) {
+                    toast.error('User ID not found');
+                    setLoading(false);
+                    return;
+                }
+
+                await fetchCart(userId);
+                setLoading(false);
             } catch (error) {
                 toast.error('Failed to fetch cart items.');
+                setLoading(false);
             }
         };
 
         fetchCartItems();
-    }, [profile._id, fetchCart]);
+    }, [profile, fetchCart]);
 
     useEffect(() => {
-        setCartItems(cart);  // Update cartItems when cart changes
+        setCartItems(cart);
     }, [cart]);
 
     const handleRemove = async (item) => {
@@ -39,7 +54,7 @@ const Cart = () => {
         try {
             await clearCart();
             toast.success('Cart cleared!');
-            setCartItems([]);  // Reset cartItems
+            setCartItems([]);
         } catch (error) {
             toast.error('Failed to clear cart.');
         }
@@ -52,13 +67,19 @@ const Cart = () => {
         }
 
         try {
+            const userId = profile?._id || profile?.user?._id;
+            if (!userId) {
+                toast.error('User ID not found');
+                return;
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/order/single-order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    userId: profile._id,
+                    userId,
                     productId: item.product._id,
                     quantity: item.quantity,
                     address: address,
@@ -81,13 +102,19 @@ const Cart = () => {
 
     const handleBuyAll = async () => {
         try {
+            const userId = profile?._id || profile?.user?._id;
+            if (!userId) {
+                toast.error('User ID not found');
+                return;
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/order/orders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    userId: profile._id,
+                    userId,
                     cartItems: cartItems.map(item => ({
                         productId: item.product._id,
                         quantity: item.quantity,
@@ -108,8 +135,31 @@ const Cart = () => {
         }
     };
 
+    if (!profile) {
+        return (
+            <div className="container mx-auto my-10 p-6 bg-white">
+                <div className="text-center text-orange-500 font-semibold">Loading profile...</div>
+            </div>
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className="container mx-auto my-10 p-6 bg-white">
+                <div className="text-center text-orange-500 font-semibold">Loading cart items...</div>
+            </div>
+        );
+    }
+
     if (!cartItems.length) {
-        return <div>Your cart is empty.</div>;
+        return (
+            <div className="container mx-auto my-10 p-6 bg-white">
+                <h1 className="text-4xl font-bold mb-6 text-center bg-gradient-to-r from-green-500 via-orange-500 to-white text-transparent bg-clip-text drop-shadow-lg animate__animated animate__fadeInDown">
+                    Your Cart
+                </h1>
+                <div className="text-center text-gray-600 font-semibold">Your cart is empty.</div>
+            </div>
+        );
     }
 
     const totalAmount = cartItems.reduce((total, item) => total + (item.product?.price || item.price) * item.quantity, 0);
