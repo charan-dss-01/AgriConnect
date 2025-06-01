@@ -22,7 +22,7 @@ export default function Detail() {
                 console.log("Fetched product data:", data);
                 setProduct(data);
             } catch (error) {
-                toast.error('Failed to fetch product data');
+                toast.error('please login to see the product details');
                 console.error(error);
             } finally {
                 setLoading(false);
