@@ -1,18 +1,17 @@
-import React from 'react'
-import Hero from '../home/Hero'
-import Fruits from '../home/Fruits'
-import Vegetables from '../home/Vegetables'
-import Creator from '../home/Creator'
+import React from "react";
+import Hero from "../home/Hero";
+import Fruits from "../home/Fruits";
+import Vegetables from "../home/Vegetables";
+import Creator from "../home/Creator";
+import Fetch from "./Fetch";
 
 export default function Home() {
-
-  
   return (
     <div>
-      <Hero/>
-      <Fruits/>
-      <Vegetables/>
-      <Creator/>
+      <Hero />
+      <Fruits />
+      <Vegetables />
+      <Creator />
     </div>
-  )
+  );
 }

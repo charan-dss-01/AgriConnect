@@ -1,41 +1,47 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
-import Navbar from '../src/components/Navbar';
-import Home from '../src/components/Home';
-import Footer from '../src/components/Footer';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import Products from '../src/pages/Products';
-import About from '../src/pages/About';
-import Contact from '../src/pages/Contact';
-import Creators from '../src/pages/Creators';
-import Login from '../src/pages/Login';
-import Register from '../src/pages/Register';
-import Dashboard from '../src/pages/Dashboard';
-import { useAuth } from './context/AuthProvider';
-import { Toaster } from 'react-hot-toast';
-import UpdateBlog from './dashboard/UpdateProduct';
-import Detail from './pages/Detail';
-import NotFound from './pages/NotFound';
-import NaturalProducts from './pages/NaturalProducts';
-import Cart from './dashboard/Cart'; 
-import Orders from './dashboard/Orders';
-import MyOrder from './dashboard/MyOrders';
-import ChatBot from './pages/ChatBot';
-import SalesOverview from './pages/SalesOverView';
-import AddReview from './pages/AddReview';
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import Navbar from "../src/components/Navbar";
+import Home from "../src/components/Home";
+import Footer from "../src/components/Footer";
+import { Route, Routes, useLocation } from "react-router-dom";
+import Products from "../src/pages/Products";
+import About from "../src/pages/About";
+import Contact from "../src/pages/Contact";
+import Creators from "../src/pages/Creators";
+import Login from "../src/pages/Login";
+import Register from "../src/pages/Register";
+import Dashboard from "../src/pages/Dashboard";
+import { useAuth } from "./context/AuthProvider";
+import { Toaster } from "react-hot-toast";
+import UpdateBlog from "./dashboard/UpdateProduct";
+import Detail from "./pages/Detail";
+import NotFound from "./pages/NotFound";
+import NaturalProducts from "./pages/NaturalProducts";
+import Cart from "./dashboard/Cart";
+import Orders from "./dashboard/Orders";
+import MyOrder from "./dashboard/MyOrders";
+import ChatBot from "./pages/ChatBot";
+import SalesOverview from "./pages/SalesOverView";
+import AddReview from "./pages/AddReview";
+import Fetch from "./components/Fetch";
+import FetchCart from "./components/FetchCart";
 
 export default function App() {
   const location = useLocation(); // Use useLocation to get the current path
-  const hideNavBarFooter = ["/dashboard", "/register", "/login"].includes(location.pathname);
+  const hideNavBarFooter = ["/dashboard", "/register", "/login"].includes(
+    location.pathname,
+  );
   const { products } = useAuth();
-  
+
   console.log(products);
 
   return (
     <div>
       {!hideNavBarFooter && <Navbar />}
+      <Fetch />
+      <FetchCart />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -54,7 +60,8 @@ export default function App() {
           <Route path="/:productId/review" element={<AddReview />} />
           <Route path="/product/update/:id" element={<UpdateBlog />} />
           <Route path="/product/:id" element={<Detail />} />
-          <Route path="/cart" element={<Cart />} /> {/* Add route for the cart page */}
+          <Route path="/cart" element={<Cart />} />{" "}
+          {/* Add route for the cart page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

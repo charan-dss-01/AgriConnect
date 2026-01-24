@@ -1,26 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import farmerImage from '../assets/farmer.webp'; // Replace with your desired farmer image
-import { API_BASE_URL } from '../config';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import farmerImage from "../assets/farmer.webp"; // Replace with your desired farmer image
+import { useSelector } from "react-redux";
 
 export default function Farmers() {
-  const [admins, setAdmin] = useState([]);
+  // const [admins, setAdmin] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState(null);
 
-  useEffect(() => {
-    const fetchAdmins = async () => {
-      try {
-        const { data } = await axios.get(`${API_BASE_URL}/api/users/admin`, {
-          withCredentials: true,
-        });
-        console.log(data);
-        setAdmin(data);
-      } catch (error) {
-        console.error("Error fetching admins:", error);
-      }
-    };
-    fetchAdmins();
-  }, []);
+  const { admins } = useSelector((store) => store.product);
+
+  console.log(admins);
+
+  // useEffect(() => {
+  //   const fetchAdmins = async () => {
+  //     try {
+  //       const { data } = await axios.get(`${API_BASE_URL}/api/users/admin`, {
+  //         withCredentials: true,
+  //       });
+  //       console.log(data);
+  //       setAdmin(data);
+  //     } catch (error) {
+  //       console.error("Error fetching admins:", error);
+  //     }
+  //   };
+  //   fetchAdmins();
+  // }, []);
 
   const handleViewProfile = (profile) => {
     setSelectedProfile(profile);
@@ -34,21 +38,26 @@ export default function Farmers() {
     <div className="container mx-auto my-10 px-4">
       {/* Hero Section */}
       <div className="relative">
-        <img 
-          src={farmerImage} 
-          alt="Farmers working in the field" 
-          className="w-full h-64 object-cover rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105" 
+        <img
+          src={farmerImage}
+          alt="Farmers working in the field"
+          className="w-full h-64 object-cover rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 transition-all duration-300 hover:bg-opacity-50">
-          <h1 className="text-4xl text-white font-bold shadow-md transition-colors duration-300 hover:text-green-300">Meet Our Farmers</h1>
+          <h1 className="text-4xl text-white font-bold shadow-md transition-colors duration-300 hover:text-green-300">
+            Meet Our Farmers
+          </h1>
         </div>
       </div>
 
       {/* Content Section */}
       <div className="mt-10 text-center space-y-8 border-2 border-green-400 rounded-lg p-6 shadow-lg">
-        <h2 className="text-3xl font-semibold text-green-700">Our Dedicated Farmers</h2>
+        <h2 className="text-3xl font-semibold text-green-700">
+          Our Dedicated Farmers
+        </h2>
         <p className="mt-4 text-gray-700 leading-relaxed text-lg">
-          We are proud to collaborate with local farmers who are committed to sustainable agriculture. Here are some of our dedicated farmers:
+          We are proud to collaborate with local farmers who are committed to
+          sustainable agriculture. Here are some of our dedicated farmers:
         </p>
       </div>
 
@@ -106,14 +115,24 @@ export default function Farmers() {
               ✕
             </button>
             <img
-              src={selectedProfile.photo ? selectedProfile.photo.url : farmerImage}
+              src={
+                selectedProfile.photo ? selectedProfile.photo.url : farmerImage
+              }
               alt="profile"
               className="w-24 h-24 rounded-full mx-auto border-4 border-gray-300 mb-4 shadow-md"
             />
-            <h3 className="text-2xl font-bold text-green-700">{selectedProfile.name}</h3>
-            <p className="text-gray-600 mt-2 font-medium"><strong>Email:</strong> {selectedProfile.email}</p>
-            <p className="text-gray-600 mt-2 font-medium"><strong>Phone:</strong> {selectedProfile.phone}</p>
-            <p className="text-gray-600 mt-2 font-medium"><strong>Role:</strong> {selectedProfile.role}</p>
+            <h3 className="text-2xl font-bold text-green-700">
+              {selectedProfile.name}
+            </h3>
+            <p className="text-gray-600 mt-2 font-medium">
+              <strong>Email:</strong> {selectedProfile.email}
+            </p>
+            <p className="text-gray-600 mt-2 font-medium">
+              <strong>Phone:</strong> {selectedProfile.phone}
+            </p>
+            <p className="text-gray-600 mt-2 font-medium">
+              <strong>Role:</strong> {selectedProfile.role}
+            </p>
           </div>
         </div>
       )}

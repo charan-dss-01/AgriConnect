@@ -1,20 +1,23 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../config';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { API_BASE_URL } from "../config";
+import { useSelector } from "react-redux";
 
 export default function Creator() {
-  const [admin, setAdmin] = useState([]);
+  // const [admin, setAdmin] = useState([]);
+  const admin = useSelector((store) => store.product.admins);
+  // console.log("creators:", ad);
 
-  useEffect(() => {
-    const fetchAdmins = async () => {
-      const { data } = await axios.get(`${API_BASE_URL}/api/users/admin`, {
-        withCredentials: true,
-      });
-      console.log(data);
-      setAdmin(data);
-    };
-    fetchAdmins();
-  }, []);
+  // useEffect(() => {
+  //   const fetchAdmins = async () => {
+  //     const { data } = await axios.get(`${API_BASE_URL}/api/users/admin`, {
+  //       withCredentials: true,
+  //     });
+  //     console.log(data);
+  //     setAdmin(data);
+  //   };
+  //   fetchAdmins();
+  // }, []);
 
   return (
     <div className="container mx-auto my-10 p-6">
@@ -39,7 +42,7 @@ export default function Creator() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-50 transition-opacity duration-300 rounded-full"></div>
               </div>
-              
+
               {/* Display creator's name */}
               <h2 className="text-xl font-semibold text-center group-hover:text-yellow-500 transition-colors duration-300">
                 {creator.name}
@@ -47,7 +50,7 @@ export default function Creator() {
 
               {/* Display role as "farmer" */}
               <p className="text-center text-gray-600">Farmer</p>
-              
+
               {/* Add a subtle line at the bottom */}
               <div className="mt-4 border-t-2 border-yellow-400 w-16 mx-auto opacity-75"></div>
             </div>

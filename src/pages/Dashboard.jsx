@@ -1,25 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthProvider';
-import Sidebar from '../dashboard/Sidebar';
-import MyProfile from '../dashboard/MyProfile';
-import MyProducts from '../dashboard/MyProducts';
-import CreateProduct from '../dashboard/CreateProduct';
-import UpdateProduct from '../dashboard/UpdateProduct';
-import Orders from '../dashboard/Orders';
-import Cart from '../dashboard/Cart';
-import { Navigate } from 'react-router-dom';
-
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthProvider";
+import Sidebar from "../dashboard/Sidebar";
+import MyProfile from "../dashboard/MyProfile";
+import MyProducts from "../dashboard/MyProducts";
+import CreateProduct from "../dashboard/CreateProduct";
+import UpdateProduct from "../dashboard/UpdateProduct";
+import Orders from "../dashboard/Orders";
+import Cart from "../dashboard/Cart";
+import { Navigate } from "react-router-dom";
+import FetchCart from "../components/FetchCart";
+import { useSelector } from "react-redux";
 
 export default function Dashboard() {
-  const { profile, isAuthenticated } = useAuth();
-  
+  const profile = useSelector((store) => store.auth.profile);
+  const isAuthenticated = useSelector((store) => store.auth.isAuthenticated);
+
   // State to track the active component to display
   const [component, setComponent] = useState("My Profile");
 
   useEffect(() => {
     // Set initial component based on user role after profile is loaded
     if (profile) {
-      setComponent((profile?.role === "admin" || profile?.user?.role === "admin") ? "My Products" : "My Profile");
+      const userRole = profile?.role || profile?.user?.role;
+      setComponent(userRole === "admin" ? "My Products" : "My Profile");
     }
   }, [profile]);
 
@@ -30,10 +33,11 @@ export default function Dashboard() {
 
   return (
     <div>
+      {/* <FetchCart /> */}
       <Sidebar component={component} setComponent={setComponent} />
       {component === "My Profile" ? (
         <MyProfile />
-      ) : component === "Create Products" ? (
+      ) : component === "Create Product" ? (
         <CreateProduct />
       ) : component === "Update Product" ? (
         <UpdateProduct />
@@ -43,8 +47,10 @@ export default function Dashboard() {
         <Cart />
       ) : component === "My Orders" ? (
         <Orders />
-      ) :(
-        profile?.role === "admin" ? <MyProducts /> : <MyProfile />
+      ) : profile?.role === "admin" ? (
+        <MyProducts />
+      ) : (
+        <MyProfile />
       )}
     </div>
   );

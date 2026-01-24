@@ -1,41 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaSearch, FaCaretDown } from 'react-icons/fa'; 
-import 'animate.css'; 
-import { API_BASE_URL } from '../config';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { FaSearch, FaCaretDown } from "react-icons/fa";
+import "animate.css";
+import { API_BASE_URL } from "../config";
+import { useSelector } from "react-redux";
 export default function Products() {
-  const [products, setProducts] = useState([]); 
-  const [searchQuery, setSearchQuery] = useState(''); 
-  const [selectedCategory, setSelectedCategory] = useState(''); 
+  // const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
- 
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/products/all-products`);
-      const data = await response.json();
-      setProducts(data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  };
+  const products = useSelector((store) => store.product.products);
 
-  useEffect(() => {
-    fetchProducts(); 
-  }, []);
+  console.log(products);
 
+  // const fetchProducts = async () => {
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/api/products/all-products`);
+  //     const data = await response.json();
+  //     setProducts(data);
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //   }
+  // };
 
-  const categories = [...new Set(products.map(product => product.category))];
+  // useEffect(() => {
+  //   fetchProducts();
+  // }, []);
 
+  const categories = [
+    ...new Set(
+      products?.filter((p) => p.category).map((product) => product.category) ||
+        [],
+    ),
+  ];
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearchQuery = product.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
-    return matchesSearchQuery && matchesCategory;
-  });
+  const filteredProducts =
+    products?.filter((product) => {
+      const matchesSearchQuery =
+        product.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        false;
+      const matchesCategory = selectedCategory
+        ? product.category === selectedCategory
+        : true;
+      return matchesSearchQuery && matchesCategory;
+    }) || [];
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-bold text-center mb-8 text-orange-500">Our Products</h1>
+      <h1 className="text-4xl font-bold text-center mb-8 text-orange-500">
+        Our Products
+      </h1>
 
       {/* Search and Category section */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-0">
@@ -46,7 +60,7 @@ export default function Products() {
             type="text"
             placeholder="Search products..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} 
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 p-3 border border-gray-300 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
@@ -56,7 +70,7 @@ export default function Products() {
           <FaCaretDown className="absolute right-3 top-4 text-gray-400" />
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)} 
+            onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full p-3 pl-5 pr-10 border border-gray-300 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none"
           >
             <option value="">All Categories</option>
@@ -72,10 +86,22 @@ export default function Products() {
       {/* Product list */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {filteredProducts.map((product, index) => {
-          const { _id, title, productImage, category, price, adminphoto, adminName } = product;
+          const {
+            _id,
+            title,
+            productImage,
+            category,
+            price,
+            adminphoto,
+            adminName,
+          } = product;
 
           return (
-            <Link to={`/product/${_id}`} key={_id} className="block animate__animated animate__fadeInDown animate__delay-1s">
+            <Link
+              to={`/product/${_id}`}
+              key={_id}
+              className="block animate__animated animate__fadeInDown animate__delay-1s"
+            >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 transform hover:scale-105 hover:shadow-2xl">
                 {/* Product Image */}
                 <div className="relative">

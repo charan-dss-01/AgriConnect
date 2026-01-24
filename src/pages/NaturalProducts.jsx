@@ -2,12 +2,14 @@ import React from "react";
 import { useAuth } from "../context/AuthProvider";
 import { Link } from "react-router-dom";
 import "animate.css"; // Import animate.css if installed via npm
+import { useSelector } from "react-redux";
 
 const NaturalProducts = () => {
-  const { products } = useAuth();
-
+  const products = useSelector((store) => store.product.products);
   // Filter for natural products
-  const naturalProducts = products?.filter((product) => product.category === "natural");
+  const naturalProducts = products?.filter(
+    (product) => product.category === "natural",
+  );
 
   return (
     <div className="container mx-auto my-10 p-6">
@@ -25,7 +27,7 @@ const NaturalProducts = () => {
               price,
               adminphoto,
               adminName,
-              about
+              about,
             } = product;
 
             return (
@@ -85,7 +87,9 @@ const NaturalProducts = () => {
           })
         ) : (
           <div className="flex h-screen items-center justify-center">
-            <p className="text-lg">No natural products available at the moment.</p>
+            <p className="text-lg">
+              No natural products available at the moment.
+            </p>
           </div>
         )}
       </div>
