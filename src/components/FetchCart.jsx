@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { productActions } from "../store/productSlice";
 import { API_BASE_URL } from "../config";
 import { authAction } from "../store/authSlice";
-import { useAuth } from "../context/AuthProvider";
 import { cartAction } from "../store/cartSlice";
 // import { cartActions } from "../store/cartSlice"; // Uncomment once cart slice is created
 function FetchCart() {

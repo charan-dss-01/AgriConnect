@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "../context/AuthProvider";
+// import { useAuth } from "../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -57,10 +57,10 @@ const ProductCard = ({ product }) => {
           </p>
           {/* Full-Width Add to Cart Button with Navigation */}
           <button
-            onClick={() => navigate(`/cart/${_id}`)}
+            // onClick={() => navigate(`/cart/${_id}`)}
             className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 w-full rounded-lg"
           >
-            Add to Cart
+            View Product
           </button>
         </div>
       </div>

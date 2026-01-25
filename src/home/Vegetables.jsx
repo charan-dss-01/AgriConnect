@@ -67,10 +67,10 @@ const ProductCard = ({ product, index }) => {
 
           {/* Full-Width Add to Cart Button Inside Card */}
           <button
-            onClick={handleAddToCart}
+            // onClick={handleAddToCart}
             className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 w-full rounded-lg"
           >
-            Add to Cart
+            View Product
           </button>
         </div>
       </div>

@@ -17,6 +17,7 @@ export default function Detail() {
   const dispatch = useDispatch();
 
   const prods = useSelector((store) => store.product.products);
+  const cart = useSelector((store) => store.cart.cart);
   console.log("all", prods);
 
   const userId = useSelector((store) => store.auth.profile?._id);
@@ -45,6 +46,7 @@ export default function Detail() {
 
       console.log("Product added to cart:", response.data);
       dispatch(cartAction.addSingleItem(product));
+      console.log("Product from cart:", cart);
       toast.success("Product added to cart!");
     } catch (error) {
       console.error("Error adding to cart:", error);

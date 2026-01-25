@@ -10,9 +10,10 @@ import { authAction } from "../store/authSlice";
 export default function Header() {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { profile, isAuthenticated, setIsAuthenticated } = useAuth(); // Get auth
-  const isAuth = useSelector((store) => store.auth.isAuthenticated);
-  console.log("redux auth:", isAuth);
+  const { setIsAuthenticated } = useAuth(); // Get auth
+  const isAuthenticated = useSelector((store) => store.auth.isAuthenticated);
+  const profile = useSelector((store) => store.auth.profile);
+  //console.log("redux auth:", isAuth);
 
   //details
   console.log(profile);
@@ -36,7 +37,7 @@ export default function Header() {
       });
       localStorage.removeItem("jwt"); // Remove the token on logout
       toast.success(data.message);
-      setIsAuthenticated(false);
+      //setIsAuthenticated(false);
       dispatch(authAction.setIsAuthenticated(false));
       dispatch(authAction.setProfile([]));
       navigateTo("/login");
@@ -56,7 +57,7 @@ export default function Header() {
       }
     }
   };
-  console.log("Authenticated:", isAuthenticated);
+  // console.log("Authenticated:", isAuthenticated);
   console.log("User Role:", profile?.user?.role);
 
   return (

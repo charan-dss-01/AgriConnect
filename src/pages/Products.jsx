@@ -145,7 +145,7 @@ export default function Products() {
                     </p>
                     <Link to={`/cart/${_id}`} className="block w-full">
                       <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 w-full rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                        Add to Cart
+                        View Product
                       </button>
                     </Link>
                   </div>

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useDispatch } from "react-redux";
 import { productActions } from "../store/productSlice";
+import { cartAction } from "../store/cartSlice";
 
 export default function MyProducts() {
   const dispatch = useDispatch();
@@ -38,6 +39,7 @@ export default function MyProducts() {
         toast.success(res.data.message || "Product deleted successfully");
         setMyProducts((value) => value.filter((product) => product._id !== id));
         dispatch(productActions.removeProduct(product._id));
+        dispatch(cartAction.removeItem(product._id));
       })
       .catch((error) => {
         toast.error(

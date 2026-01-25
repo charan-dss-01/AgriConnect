@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import toast from 'react-hot-toast';
-import { API_BASE_URL } from '../config';
+import axios from "axios";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { API_BASE_URL } from "../config";
 
 export default function CreateProduct() {
   const [title, setTitle] = useState("");
@@ -44,8 +44,8 @@ export default function CreateProduct() {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
-          }
-        }
+          },
+        },
       );
 
       toast.success(data.message || "Product created successfully.");
@@ -57,6 +57,8 @@ export default function CreateProduct() {
       setProductImagePreview("");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create product.");
+      console.log(formData);
+
       console.error("Error creating product:", error);
     }
   };
@@ -67,7 +69,6 @@ export default function CreateProduct() {
         <div className="max-w-4xl mx-auto p-6 border rounded-lg shadow-lg">
           <h3 className="text-2xl font-semibold mb-8">Create Product</h3>
           <form onSubmit={handleCreateProduct} className="space-y-6">
-
             {/* Title input */}
             <div className="space-y-2">
               <label className="block text-lg">Title</label>
@@ -85,7 +86,9 @@ export default function CreateProduct() {
               <label className="block text-lg">Product Image</label>
               <div className="flex items-center justify-center">
                 <img
-                  src={productImagePreview ? productImagePreview : "/imgPL.webp"}
+                  src={
+                    productImagePreview ? productImagePreview : "/imgPL.webp"
+                  }
                   alt="Product Preview"
                   className="w-full max-w-sm h-auto rounded-md object-cover"
                 />
@@ -108,7 +111,8 @@ export default function CreateProduct() {
                 <option value="">Select Category</option> {/* Default option */}
                 <option value="fruit">Fruits</option>
                 <option value="vegetable">Vegetables</option>
-                <option value="natural">Natural Products</option> {/* Added new category */}
+                <option value="natural">Natural Products</option>{" "}
+                {/* Added new category */}
               </select>
             </div>
 

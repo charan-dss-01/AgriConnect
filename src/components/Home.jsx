@@ -3,7 +3,6 @@ import Hero from "../home/Hero";
 import Fruits from "../home/Fruits";
 import Vegetables from "../home/Vegetables";
 import Creator from "../home/Creator";
-import Fetch from "./Fetch";
 
 export default function Home() {
   return (

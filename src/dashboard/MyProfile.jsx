@@ -1,14 +1,15 @@
-import React from 'react';
-import { useAuth } from '../context/AuthProvider';
+import React from "react";
+import { useSelector } from "react-redux";
 
 export default function MyProfile({ sidebarOpen }) {
-  const { profile } = useAuth();
-
+  const profile = useSelector((store) => store.auth.profile);
   // Show loading message if profile data is not available yet
   if (!profile) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center text-orange-500 font-semibold">Loading profile...</div>
+        <div className="text-center text-orange-500 font-semibold">
+          Loading profile...
+        </div>
       </div>
     );
   }
@@ -40,7 +41,9 @@ export default function MyProfile({ sidebarOpen }) {
         {/* User Info */}
         <div className="text-center mt-4 px-6">
           <h1 className="text-2xl font-bold text-gray-800">{name}</h1>
-          <p className="text-orange-600 font-semibold mt-1">{profile?.role || profile?.user?.role}</p>
+          <p className="text-orange-600 font-semibold mt-1">
+            {profile?.role || profile?.user?.role}
+          </p>
         </div>
 
         {/* Details */}
@@ -48,21 +51,27 @@ export default function MyProfile({ sidebarOpen }) {
           <div className="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
             <div className="flex-1">
               <p className="text-sm text-orange-600 font-medium">Email</p>
-              <p className="text-gray-800 font-medium mt-1">{profile?.email || profile?.user?.email}</p>
+              <p className="text-gray-800 font-medium mt-1">
+                {profile?.email || profile?.user?.email}
+              </p>
             </div>
           </div>
 
           <div className="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
             <div className="flex-1">
               <p className="text-sm text-orange-600 font-medium">Phone</p>
-              <p className="text-gray-800 font-medium mt-1">{profile?.phone || profile?.user?.phone}</p>
+              <p className="text-gray-800 font-medium mt-1">
+                {profile?.phone || profile?.user?.phone}
+              </p>
             </div>
           </div>
 
           <div className="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors duration-300">
             <div className="flex-1">
               <p className="text-sm text-orange-600 font-medium">Joined</p>
-              <p className="text-gray-800 font-medium mt-1">{new Date(createdAt).toLocaleDateString()}</p>
+              <p className="text-gray-800 font-medium mt-1">
+                {new Date(createdAt).toLocaleDateString()}
+              </p>
             </div>
           </div>
         </div>

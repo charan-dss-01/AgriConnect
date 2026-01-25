@@ -41,8 +41,8 @@ function Login() {
       toast.success(data.message || "User Logged in successfully");
       const profileData = data.user || data; // Handle both response structures
       console.log("Login response:", profileData); // Check structure
-      setProfile(profileData);
-      setIsAuthenticated(true);
+      //setProfile(profileData);
+      //setIsAuthenticated(true);
       dispatch(authAction.setIsAuthenticated(true));
       dispatch(authAction.setProfile(profileData));
       setPassword("");

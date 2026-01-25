@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useAuth } from "../context/AuthProvider";
+// import { useAuth } from "../context/AuthProvider";
 import toast from "react-hot-toast";
 import { API_BASE_URL } from "../config";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +8,7 @@ import { cartAction } from "../store/cartSlice";
 import axios from "axios";
 
 const Cart = () => {
-  const { cart, fetchCart, clearCart, profile } = useAuth();
+  //   const { cart, fetchCart, clearCart, profile } = useAuth();
   const dispatch = useDispatch();
   const userId = useSelector((store) => store.auth.profile._id);
   console.log("userid", userId);
@@ -29,10 +29,15 @@ const Cart = () => {
       setError("User ID or Product information is missing.");
       return;
     }
+    const productId = product?.product?._id ?? product?._id;
+
+    if (!productId) {
+      throw new Error("Product ID not found");
+    }
 
     try {
       const response = await axios.delete(
-        `${API_BASE_URL}/api/users/cart/remove/${product.product._id || product._id}`,
+        `${API_BASE_URL}/api/users/cart/remove/${productId}`,
         {
           withCredentials: true,
           data: { userId, product },
@@ -55,18 +60,40 @@ const Cart = () => {
     }
   };
 
+  const clearCart = async () => {
+    if (!userId) {
+      console.error("User ID is missing.");
+      setError("User ID is missing.");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/api/users/cart/clear`,
+        {
+          withCredentials: true,
+          data: { userId },
+        },
+      );
+      console.log("Cart cleared:", response.data);
+    } catch (error) {
+      setError(error.response?.data?.message || "Error clearing cart");
+      console.error("Error clearing cart:", error);
+    }
+  };
+
   const handleClearCart = async () => {
     try {
       await clearCart();
-      toast.success("Cart cleared!");
       dispatch(cartAction.addCart([]));
+      toast.success("Cart cleared!");
     } catch (error) {
       toast.error("Failed to clear cart.");
     }
   };
 
   const handleBuyNow = async (item) => {
-    if (!address) {
+    if (!address.current?.value) {
       toast.error("Please enter your address!");
       return;
     }
@@ -74,6 +101,11 @@ const Cart = () => {
     try {
       if (!userId) {
         toast.error("User ID not found");
+        return;
+      }
+
+      if (!item.product?._id) {
+        toast.error("Product information missing");
         return;
       }
 
@@ -86,7 +118,7 @@ const Cart = () => {
           userId,
           productId: item.product._id,
           quantity: item.quantity,
-          address: address,
+          address: address.current.value,
         }),
       });
 
@@ -94,17 +126,17 @@ const Cart = () => {
         toast.success("Order placed successfully!");
         await removeFromCart(item);
         setShowAddressForm(false);
-        setAddress("");
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Failed to place order.");
       }
     } catch (error) {
       toast.error("An error occurred while placing the order.");
+      console.log(error);
     }
   };
 
-  if (!profile) {
+  if (!userId) {
     return (
       <div className="container mx-auto my-10 p-6 bg-white">
         <div className="text-center text-orange-500 font-semibold">
@@ -155,53 +187,74 @@ const Cart = () => {
             key={item._id}
             className="backdrop-blur-lg bg-white/30 shadow-2xl p-4 rounded-2xl border border-gray-200 hover:shadow-xl transform transition-all duration-300 flex"
           >
-            <div className="w-1/2">
-              <img
-                src={
-                  item.product?.productImage?.url ||
-                  item.productImage?.url ||
-                  "default-image-url"
-                }
-                alt={item.productName || "Product"}
-                className="w-full h-full object-cover rounded-lg"
-              />
-            </div>
+            {item.product ? (
+              <>
+                <div className="w-1/2">
+                  <img
+                    src={
+                      item.product?.productImage?.url ||
+                      item.productImage?.url ||
+                      "default-image-url"
+                    }
+                    alt={item.productName || "Product"}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
 
-            <div className="w-1/2 flex flex-col justify-between pl-4">
-              <div>
-                <h2 className="text-xl font-bold text-gray-800">
-                  {item.productName}
-                </h2>
-                <p className="text-gray-500 mt-2">{item.product?.about}</p>
-                <p className="mt-3 text-lg font-semibold text-gray-900">
-                  ₹
-                  {(item.product?.price || item.price) * item.quantity ||
-                    item.price}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Quantity: {item.quantity || 1}
-                </p>
+                <div className="w-1/2 flex flex-col justify-between pl-4">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-800">
+                      {item.productName}
+                    </h2>
+                    <p className="text-gray-500 mt-2">{item.product?.about}</p>
+                    <p className="mt-3 text-lg font-semibold text-gray-900">
+                      ₹
+                      {(item.product?.price || item.price) * item.quantity ||
+                        item.price}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Quantity: {item.quantity || 1}
+                    </p>
+                  </div>
+
+                  <div className="flex justify-between mt-4">
+                    <button
+                      onClick={() => handleRemove(item)}
+                      className="text-red-500 hover:text-red-700 font-semibold bg-red-100 py-2 px-4 rounded-lg transition-all duration-300 hover:bg-red-200"
+                    >
+                      Remove
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setCurrentItem(item);
+                        setShowAddressForm(true);
+                      }}
+                      className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-all duration-300"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="w-full bg-gray-100 p-4 rounded flex items-center justify-center">
+                <div>
+                  <p className="text-gray-600 text-center font-semibold">
+                    Product no longer available
+                  </p>
+                  <p className="text-gray-500 text-sm text-center mt-2">
+                    Quantity: {item.quantity || 1}
+                  </p>
+                  <button
+                    onClick={() => handleRemove(item)}
+                    className="mt-3 text-red-500 hover:text-red-700 font-semibold bg-red-100 py-2 px-4 rounded-lg transition-all duration-300 hover:bg-red-200 w-full"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={() => handleRemove(item)}
-                  className="text-red-500 hover:text-red-700 font-semibold bg-red-100 py-2 px-4 rounded-lg transition-all duration-300 hover:bg-red-200"
-                >
-                  Remove
-                </button>
-
-                <button
-                  onClick={() => {
-                    setCurrentItem(item); // Set current item for ordering
-                    setShowAddressForm(true);
-                  }}
-                  className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-all duration-300"
-                >
-                  Buy Now
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         ))}
 

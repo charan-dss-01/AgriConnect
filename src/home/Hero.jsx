@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 function Hero() {
   const { products } = useSelector((store) => store.product);
-  const { addToCart } = useAuth(); // Destructure addToCart
+  //   const { addToCart } = useAuth(); // Destructure addToCart
 
   return (
     <div className="container mx-auto my-10 p-6">
@@ -77,10 +77,10 @@ function Hero() {
                           Price: ₹{price}
                         </p>
                         <button
-                          onClick={() => addToCart(product)} // Use addToCart here
+                          //   onClick={() => addToCart(product)} // Use addToCart here
                           className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 w-full rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                         >
-                          Add to Cart
+                          View Product
                         </button>
                       </div>
                     </div>
