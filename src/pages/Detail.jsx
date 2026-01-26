@@ -12,6 +12,7 @@ export default function Detail() {
   //const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]); // State for storing reviews
   const [loading, setLoading] = useState(true);
+  const [cartStatus, setCartStatus] = useState(false);
   //   const { addToCart } = useAuth();
 
   const dispatch = useDispatch();
@@ -38,9 +39,10 @@ export default function Detail() {
     }
 
     try {
+      setCartStatus(true);
       const response = await axios.post(
         `${API_BASE_URL}/api/users/cart/add/${product._id}`,
-        { userId, product },
+        { userId, product: product._id },
         { withCredentials: true },
       );
 
@@ -48,7 +50,9 @@ export default function Detail() {
       dispatch(cartAction.addSingleItem(product));
       console.log("Product from cart:", cart);
       toast.success("Product added to cart!");
+      setCartStatus(false);
     } catch (error) {
+      setCartStatus(false);
       console.error("Error adding to cart:", error);
     }
   };
@@ -162,10 +166,42 @@ export default function Detail() {
           </p>
 
           <button
-            className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 text-lg font-semibold"
             onClick={handleAddToCart}
+            disabled={cartStatus}
+            className={`w-full py-4 rounded-lg text-lg font-semibold text-white 
+    transition-all duration-300 flex items-center justify-center gap-2
+    ${
+      cartStatus
+        ? "bg-green-400 cursor-not-allowed"
+        : "bg-green-600 hover:bg-green-700 hover:scale-[1.02]"
+    }`}
           >
-            Add to Cart
+            {cartStatus ? (
+              <>
+                <svg
+                  className="w-5 h-5 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
+                </svg>
+                Adding to Cart...
+              </>
+            ) : (
+              "Add to Cart 🛒"
+            )}
           </button>
         </div>
       </div>

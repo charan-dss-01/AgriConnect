@@ -58,6 +58,9 @@ const cartSlice = createSlice({
     removeItem: (state, action) => {
       state.cart = state.cart.filter(item => item._id !== action.payload);
     },
+    setLoading:(state,action)=>{
+      state.loading=action.payload;
+    },
     addSingleItem: (state, action) => {
       const product = action.payload;
 

@@ -5,13 +5,14 @@ import toast from "react-hot-toast";
 import "animate.css";
 import { API_BASE_URL } from "../config";
 import { useSelector } from "react-redux";
+import ProductLoader from "../components/ProductLoader";
 
 // Component to fetch and display farmer orders
 const FarmerOrders = () => {
   //   const { profile } = useAuth(); // Get the farmer profile from authentication context
   const profile = useSelector((store) => store.auth.profile);
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(!profile);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Function to fetch farmer's orders
@@ -91,11 +92,19 @@ const FarmerOrders = () => {
   }, [profile]);
 
   if (!profile) {
-    return <div className="text-center py-4">Loading profile...</div>;
+    return (
+      <div className="text-center py-4">
+        <ProductLoader text={"Loading Profile...."} />
+      </div>
+    );
   }
 
   if (loading) {
-    return <div className="text-center py-4">Loading orders...</div>;
+    return (
+      <div className="text-center py-4">
+        <ProductLoader text={"Loading orders..."} />
+      </div>
+    );
   }
 
   if (error) {
@@ -107,7 +116,7 @@ const FarmerOrders = () => {
       <h2 className="text-3xl font-bold mb-6 text-center text-orange-600 animate__animated animate__fadeInDown">
         Farmer Orders
       </h2>
-      {orders.length === 0 ? (
+      {orders.length === 0 && loading === false ? (
         <p className="text-center py-4">No orders found.</p>
       ) : (
         <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

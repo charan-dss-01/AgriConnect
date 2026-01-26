@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 
 const Orders = ({ sidebarOpen }) => {
   const profile = useSelector((store) => store.auth?.profile);
+  // console.log("order", profile);
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(!profile);
@@ -30,7 +31,7 @@ const Orders = ({ sidebarOpen }) => {
       console.log(profile);
 
       try {
-        const userId = profile?._id || profile?.user?._id;
+        const userId = profile?._id;
         if (!userId) {
           toast.error("User ID not found");
           setLoading(false);
@@ -40,6 +41,8 @@ const Orders = ({ sidebarOpen }) => {
         const response = await axios.get(
           `${API_BASE_URL}/api/order/orderget/${userId}`,
         );
+        //console.log("order", response);
+
         setOrders(response.data.orders);
         setLoading(false);
       } catch (error) {

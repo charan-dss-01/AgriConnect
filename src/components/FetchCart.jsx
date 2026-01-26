@@ -9,7 +9,7 @@ import { cartAction } from "../store/cartSlice";
 function FetchCart() {
   const dispatch = useDispatch();
   const profile = useSelector((store) => store.auth.profile);
-  const cart = useSelector((store) => store.cart.cart);
+  // const cart = useSelector((store) => store.cart.cart);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -22,6 +22,7 @@ function FetchCart() {
       }
 
       try {
+        dispatch(cartAction.setLoading(true));
         const response = await axios.get(
           `${API_BASE_URL}/api/users/cart?userId=${userId}`,
           { withCredentials: true },
@@ -30,7 +31,9 @@ function FetchCart() {
         // Once cartSlice is created, uncomment this:
         dispatch(cartAction.addCart(response.data.cart));
         console.log("Cart fetched:", response.data.cart);
+        dispatch(cartAction.setLoading(false));
       } catch (error) {
+        dispatch(cartAction.setLoading(false));
         const errorMessage =
           error.response?.data?.message || "Error fetching cart";
         console.error("Error fetching cart:", errorMessage);

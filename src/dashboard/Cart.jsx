@@ -6,12 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 // import { removeFromCart } from "../store/cartSlice";
 import { cartAction } from "../store/cartSlice";
 import axios from "axios";
+import ProductLoader from "../components/ProductLoader";
 
 const Cart = () => {
   //   const { cart, fetchCart, clearCart, profile } = useAuth();
   const dispatch = useDispatch();
   const userId = useSelector((store) => store.auth.profile._id);
   console.log("userid", userId);
+  const loadingCart = useSelector((store) => store.cart.loading);
 
   const ccc = useSelector((store) => store.cart.cart);
   console.log("context cart:", ccc);
@@ -21,7 +23,7 @@ const Cart = () => {
   const address = useRef();
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
 
   const removeFromCart = async (product) => {
     if (!userId || !product || !product._id) {
@@ -40,7 +42,7 @@ const Cart = () => {
         `${API_BASE_URL}/api/users/cart/remove/${productId}`,
         {
           withCredentials: true,
-          data: { userId, product },
+          data: { userId, productId },
         },
       );
 
@@ -156,7 +158,7 @@ const Cart = () => {
   //     );
   //   }
 
-  if (!ccc.length) {
+  if (!ccc.length && loadingCart === false) {
     return (
       <div className="container mx-auto my-10 p-6 bg-white">
         <h1 className="text-4xl font-bold mb-6 text-center bg-gradient-to-r from-green-500 via-orange-500 to-white text-transparent bg-clip-text drop-shadow-lg animate__animated animate__fadeInDown">
@@ -180,6 +182,8 @@ const Cart = () => {
       <h1 className="text-4xl font-bold mb-6 text-center bg-gradient-to-r from-green-500 via-orange-500 to-white text-transparent bg-clip-text drop-shadow-lg animate__animated animate__fadeInDown">
         Your Cart
       </h1>
+
+      {loadingCart && <ProductLoader />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {ccc.map((item) => (

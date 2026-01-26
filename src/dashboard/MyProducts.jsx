@@ -6,22 +6,27 @@ import { API_BASE_URL } from "../config";
 import { useDispatch } from "react-redux";
 import { productActions } from "../store/productSlice";
 import { cartAction } from "../store/cartSlice";
+import ProductLoader from "../components/ProductLoader";
 
 export default function MyProducts() {
   const dispatch = useDispatch();
+  const [loader, setLoader] = useState(false);
   const [myProducts, setMyProducts] = useState([]);
 
   useEffect(() => {
     const fetchMyProducts = async () => {
       console.log("Fetching products...");
       try {
+        setLoader(true);
         const { data } = await axios.get(
           `${API_BASE_URL}/api/products/my-products`,
           { withCredentials: true },
         );
         console.log(data);
         setMyProducts(data);
+        setLoader(false);
       } catch (error) {
+        setLoader(false);
         console.log(error);
         toast.error("Failed to fetch products.");
       }
@@ -59,6 +64,7 @@ export default function MyProducts() {
         <h1 className="text-4xl font-bold mb-8 text-center text-orange-600 drop-shadow-md">
           My Products
         </h1>
+        {loader && <ProductLoader text={"Loading your products...."} />}
         <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3">
           {" "}
           {/* Adjust grid columns for larger screens */}
@@ -98,7 +104,7 @@ export default function MyProducts() {
             ))
           ) : (
             <p className="text-center text-gray-500">
-              You have not added any products yet!
+              {loader ? "" : " You have not added any products yet!"}
             </p>
           )}
         </div>

@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { API_BASE_URL } from "../config";
 import { useDispatch, useSelector } from "react-redux";
 import { authAction } from "../store/authSlice";
+import Cookies from "js-cookie";
+
 export default function Header() {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
@@ -36,6 +38,7 @@ export default function Header() {
         withCredentials: true,
       });
       localStorage.removeItem("jwt"); // Remove the token on logout
+      Cookies.remove("jwt");
       toast.success(data.message);
       //setIsAuthenticated(false);
       dispatch(authAction.setIsAuthenticated(false));
