@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom'; // Import useParams to access route parameters
 import 'animate.css'; // Import animate.css for animations
 import { API_BASE_URL } from '../config';
+import { useSelector } from "react-redux";
 const AddReview = () => {
   const profile = useSelector((store) => store.auth.profile);
     const { productId } = useParams(); // Access productId from URL params
