@@ -9,11 +9,13 @@ import ProductLoader from "../components/ProductLoader";
 
 // Component to fetch and display farmer orders
 const FarmerOrders = () => {
-  //   const { profile } = useAuth(); // Get the farmer profile from authentication context
+  // const { profile } = useAuth();
   const profile = useSelector((store) => store.auth.profile);
+
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // ✅ start true
   const [error, setError] = useState(null);
+  const [markButton, setMarkButton] = useState(false);
 
   // Function to fetch farmer's orders
   const fetchFarmerOrders = async (farmerId) => {
@@ -53,6 +55,7 @@ const FarmerOrders = () => {
         ),
       );
       toast.success("Product Delivered.");
+      setMarkButton(true);
     } catch (error) {
       console.error("Error marking order as delivered:", error);
       toast.error("Failed to mark order as delivered");
@@ -61,16 +64,15 @@ const FarmerOrders = () => {
 
   useEffect(() => {
     const getOrders = async () => {
-      if (!profile) {
-        setLoading(true);
-        return;
-      }
+      // ⛔ wait for profile, don't change loading here
+      if (!profile) return;
+
+      setLoading(true); // ✅ start orders loading
 
       try {
         const farmerId = profile?._id || profile?.user?._id;
         if (!farmerId) {
           setError("Farmer ID not found");
-          setLoading(false);
           return;
         }
 
@@ -78,13 +80,14 @@ const FarmerOrders = () => {
         const sortedOrders = fetchedOrders.sort((a, b) =>
           a.status === "Completed" ? 1 : -1,
         );
+
         setOrders(sortedOrders);
         setError(null);
       } catch (err) {
         setError("Failed to fetch orders");
         toast.error("Failed to fetch orders");
       } finally {
-        setLoading(false);
+        setLoading(false); // ✅ stop loading correctly
       }
     };
 
@@ -116,6 +119,7 @@ const FarmerOrders = () => {
       <h2 className="text-3xl font-bold mb-6 text-center text-orange-600 animate__animated animate__fadeInDown">
         Farmer Orders
       </h2>
+
       {orders.length === 0 && loading === false ? (
         <p className="text-center py-4">No orders found.</p>
       ) : (
@@ -128,9 +132,11 @@ const FarmerOrders = () => {
               <h3 className="font-bold text-xl mb-2 text-orange-700">
                 Order ID: {order._id}
               </h3>
+
               <p className="text-gray-700">
                 Total Amount: ₹{order.totalAmount}
               </p>
+
               <p
                 className={
                   order.status === "Completed"
@@ -140,11 +146,13 @@ const FarmerOrders = () => {
               >
                 Status: {order.status}
               </p>
+
               <p className="text-gray-500">
                 Order Date: {new Date(order.orderDate).toLocaleString()}
               </p>
-              {/* <p className="text-gray-500 mt-2">Address: {order.address}</p> */}
+
               <h4 className="font-semibold mt-4 text-orange-700">Items:</h4>
+
               <ul className="space-y-3 mt-2">
                 {order.items.map((item) => (
                   <li
@@ -178,13 +186,20 @@ const FarmerOrders = () => {
                   </li>
                 ))}
               </ul>
-              {/* Conditionally render the button based on the order status */}
+
               {order.status !== "Delivered" && (
                 <button
-                  className="mt-6 w-full bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-orange-600 transition-transform transform hover:scale-105 animate__animated animate__bounceIn animate__delay-2s"
-                  onClick={() => markAsDelivered(order._id)} // Call the function on click
+                  disabled={markButton}
+                  onClick={() => markAsDelivered(order._id)}
+                  className={`mt-6 w-full text-white font-semibold py-2 px-4 rounded-lg shadow-md
+      transition-all duration-300 transform
+      ${
+        markButton
+          ? "bg-orange-400 cursor-not-allowed opacity-60"
+          : "bg-orange-500 hover:bg-orange-600 hover:scale-105"
+      }`}
                 >
-                  Mark as Delivered
+                  {markButton ? "Order Delivered ✅" : "🚚 Mark as Delivered"}
                 </button>
               )}
             </li>
