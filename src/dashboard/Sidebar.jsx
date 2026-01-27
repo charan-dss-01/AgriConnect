@@ -18,6 +18,9 @@ import axios from "axios";
 import { API_BASE_URL } from "../config";
 import { useDispatch, useSelector } from "react-redux";
 import { authAction } from "../store/authSlice";
+import Cookies from "js-cookie";
+
+
 export default function Sidebar({ setComponent }) {
   const dispatch = useDispatch();
   const { setIsAuthenticated } = useAuth();
@@ -67,6 +70,7 @@ export default function Sidebar({ setComponent }) {
         withCredentials: true,
       });
       localStorage.removeItem("jwt");
+      Cookies.remove("jwt", { path: "/" });
       toast.success(data.message);
       setIsAuthenticated(false);
       dispatch(authAction.setIsAuthenticated(false));
