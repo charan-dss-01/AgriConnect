@@ -10,6 +10,7 @@ export default function CreateProduct() {
   const [price, setPrice] = useState(""); // Added price state
   const [productImage, setProductImage] = useState("");
   const [productImagePreview, setProductImagePreview] = useState("");
+  const [createButton, setCreateButton] = useState(false);
 
   // Image handling function
   const changePhotoHandler = (e) => {
@@ -37,6 +38,7 @@ export default function CreateProduct() {
     formData.append("productImage", productImage);
 
     try {
+      setCreateButton(true);
       const { data } = await axios.post(
         `${API_BASE_URL}/api/products/create`,
         formData,
@@ -55,7 +57,9 @@ export default function CreateProduct() {
       setPrice("");
       setProductImage("");
       setProductImagePreview("");
+      setCreateButton(false);
     } catch (error) {
+      setCreateButton(false);
       toast.error(error.response?.data?.message || "Failed to create product.");
       console.log(formData);
 
@@ -145,9 +149,27 @@ export default function CreateProduct() {
             {/* Submit button */}
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200"
+              disabled={createButton}
+              className="
+    w-full py-3 px-4 rounded-xl font-semibold tracking-wide
+    text-white
+    bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700
+    shadow-lg shadow-blue-300/40
+    hover:shadow-blue-400/60
+    hover:from-blue-600 hover:to-blue-800
+    transition-all duration-300 ease-out
+    transform hover:-translate-y-0.5 active:scale-95
+    disabled:opacity-70 disabled:cursor-not-allowed
+  "
             >
-              Create Product
+              {createButton ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Creating...
+                </span>
+              ) : (
+                "Create Product"
+              )}
             </button>
           </form>
         </div>
