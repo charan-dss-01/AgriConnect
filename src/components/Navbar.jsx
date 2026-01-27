@@ -38,7 +38,7 @@ export default function Header() {
         withCredentials: true,
       });
       localStorage.removeItem("jwt"); // Remove the token on logout
-      Cookies.remove("jwt");
+      Cookies.remove("jwt", { path: "/" });
       toast.success(data.message);
       //setIsAuthenticated(false);
       dispatch(authAction.setIsAuthenticated(false));
