@@ -26,39 +26,39 @@ export default function AuthProvider({ children }) {
     // }, [profile]);
    
     // Initial fetch of user's cart and products
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const { data } = await axios.get(`${API_BASE_URL}/api/users/my-profile`, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                setProfile(data);
-                setIsAuthenticated(true);
-                console.log("Profile Data:", data);
-            } catch (error) {
-                console.error("Error fetching profile:", error);
-                setIsAuthenticated(false);
-                setProfile(null);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchProfile = async () => {
+    //         try {
+    //             const { data } = await axios.get(`${API_BASE_URL}/api/users/my-profile`, {
+    //                 withCredentials: true,
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //             });
+    //             setProfile(data);
+    //             setIsAuthenticated(true);
+    //             console.log("Profile Data:", data);
+    //         } catch (error) {
+    //             console.error("Error fetching profile:", error);
+    //             setIsAuthenticated(false);
+    //             setProfile(null);
+    //         }
+    //     };
 
-        const fetchProducts = async () => {
-            try {
-                const { data } = await axios.get(`${API_BASE_URL}/api/products/all-products`);
-                setProducts(data);
-                console.log("Products fetched:", data);
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            }
-        };
+    //     const fetchProducts = async () => {
+    //         try {
+    //             const { data } = await axios.get(`${API_BASE_URL}/api/products/all-products`);
+    //             setProducts(data);
+    //             console.log("Products fetched:", data);
+    //         } catch (error) {
+    //             console.error("Error fetching products:", error);
+    //         }
+    //     };
 
-        fetchProfile();
-        fetchProducts();
-        //fetchCart(); // Fetch the cart when the provider mounts
-    }, []);
+    //     fetchProfile();
+    //     fetchProducts();
+    //     //fetchCart(); // Fetch the cart when the provider mounts
+    // }, []);
     
     const addToCart = async (product) => {
         const userId = profile?._id;
