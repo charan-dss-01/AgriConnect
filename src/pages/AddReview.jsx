@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'; // Import useParams to access rout
 import 'animate.css'; // Import animate.css for animations
 import { API_BASE_URL } from '../config';
 const AddReview = () => {
-    const { profile } = useAuth(); // Access user information from the AuthProvider
+  const profile = useSelector((store) => store.auth.profile);
     const { productId } = useParams(); // Access productId from URL params
     const [rating, setRating] = useState('');
     const [comment, setComment] = useState('');
