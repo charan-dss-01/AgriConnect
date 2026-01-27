@@ -16,6 +16,7 @@ function Login() {
   const { isAuthenticated, setIsAuthenticated, setProfile } = useAuth();
   const navigateTo = useNavigate();
   const [cardVisible, setCardVisible] = useState(false);
+  const [login, setLogin] = useState(false);
 
   useEffect(() => {
     // Show card with animation after component mounts
@@ -28,6 +29,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      setLogin(true);
       const { data } = await axios.post(
         ` ${API_BASE_URL}/api/users/login`,
         { email, password, role },
@@ -47,8 +49,10 @@ function Login() {
       dispatch(authAction.setProfile(profileData));
       setPassword("");
       setRole("");
+      setLogin(false);
       navigateTo("/");
     } catch (error) {
+      setLogin(false);
       toast.error(error.response?.data?.message || "Login failed");
     }
   };
@@ -127,9 +131,28 @@ function Login() {
           {/* Button sliding up from the bottom */}
           <button
             type="submit"
-            className={`w-full p-3 bg-orange-600 hover:bg-orange-700 text-white rounded-md transition duration-300 ${cardVisible ? "animate__animated animate__fadeInUp animate__delay-5s" : ""}`}
+            disabled={login}
+            className={`
+    w-full p-3 rounded-xl font-semibold tracking-wide
+    text-white
+   bg-orange-600
+    shadow-lg shadow-orange-300/40
+    hover:shadow-orange-400/60
+    hover:from-orange-600 hover:to-orange-800
+    transition-all duration-300 ease-out
+    transform hover:-translate-y-0.5 active:scale-95
+    disabled:opacity-70 disabled:cursor-not-allowed
+    ${cardVisible ? "animate__animated animate__fadeInUp animate__delay-5s" : ""}
+  `}
           >
-            Login
+            {login ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Logging in...
+              </span>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
       </div>
