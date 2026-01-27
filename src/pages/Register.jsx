@@ -91,7 +91,7 @@ function Register() {
           >
             <option value="">Select Role</option>
             <option value="user">User</option>
-            <option value="admin">Admin</option>
+            <option value="admin">Farmer</option>
           </select>
 
           <div className={`mb-4 ${cardVisible ? 'animate__animated animate__fadeInLeft animate__delay-2s' : ''}`}>
