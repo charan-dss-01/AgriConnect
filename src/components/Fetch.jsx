@@ -7,7 +7,8 @@ import { authAction } from "../store/authSlice";
 
 function Fetch() {
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((store) => store.auth.isAuthenticated);
+
+  // const isAuthenticated = useSelector((store) => store.auth.isAuthenticated);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -29,54 +30,33 @@ function Fetch() {
       dispatch(productActions.setAdmins(data));
     };
 
-    // const fetchProfile = async () => {
-    //   try {
-    //     const { data } = await axios.get(
-    //       `${API_BASE_URL}/api/users/my-profile`,
-    //       {
-    //         withCredentials: true,
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //       },
-    //     );
-    //     // setProfile(data);
-    //     // setIsAuthenticated(true);
-    //     dispatch(authAction.setIsAuthenticated(true));
-    //     dispatch(authAction.setProfile(data));
-    //     console.log("Profile Data:", data);
-    //   } catch (error) {
-    //     console.error("Error fetching profile:", error);
-    //     dispatch(authAction.setIsAuthenticated(false));
-    //     dispatch(authAction.setProfile([]));
-    //   }
-    // };
-
-    fetchAdmins();
-    fetchProducts();
-    // fetchProfile();
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
     const fetchProfile = async () => {
       try {
         const { data } = await axios.get(
           `${API_BASE_URL}/api/users/my-profile`,
-          { withCredentials: true },
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
         );
-
+        // setProfile(data);
+        // setIsAuthenticated(true);
+        dispatch(authAction.setIsAuthenticated(true));
         dispatch(authAction.setProfile(data));
+        console.log("Profile Data:", data);
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        // console.error("Error fetching profile:", error);
         dispatch(authAction.setIsAuthenticated(false));
-        dispatch(authAction.setProfile(null));
+        dispatch(authAction.setProfile([]));
       }
     };
 
+    fetchAdmins();
+    fetchProducts();
     fetchProfile();
-  }, [isAuthenticated, dispatch]);
+  }, [dispatch]);
 
   return <></>;
 }
