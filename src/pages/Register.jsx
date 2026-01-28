@@ -2,12 +2,15 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthProvider";
+//import { useAuth } from "../context/AuthProvider";
 import "animate.css";
 import profileImage from "../assets/pro.png";
 import { API_BASE_URL } from "../config";
+import { useDispatch } from "react-redux";
+import { authAction } from "../store/authSlice";
 function Register() {
-  const { isAuthenticated, setIsAuthenticated, setProfile } = useAuth();
+  //const { isAuthenticated, setIsAuthenticated, setProfile } = useAuth();
+  const dispatch = useDispatch();
   const navigateTo = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,8 +61,10 @@ function Register() {
         },
       );
       toast.success(data.message || "User registered successfully");
-      setProfile(data);
-      setIsAuthenticated(true);
+      // setProfile(data);
+      // setIsAuthenticated(true);
+      dispatch(authAction.setProfile(data));
+      dispatch(authAction.setIsAuthenticated(true));
       setName("");
       setEmail("");
       setPhone("");
