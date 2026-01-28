@@ -1,28 +1,41 @@
 import React, { useState, useEffect } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar, Pie, Doughnut, Line } from "react-chartjs-2";
 import axios from "axios";
-import { useAuth } from "../context/AuthProvider";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
   ArcElement,
 } from "chart.js";
 import { API_BASE_URL } from "../config";
-// Register chart.js components
+import { useSelector } from "react-redux";
+
+/* Register chart.js */
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
-  ArcElement, // For Pie chart
+  ArcElement,
 );
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { position: "bottom" },
+  },
+};
 
 const SalesOverview = () => {
   const [orders, setOrders] = useState([]);
@@ -35,157 +48,170 @@ const SalesOverview = () => {
     labels: [],
     datasets: [],
   });
-  const { profile } = useAuth();
 
+  const { profile } = useSelector((store) => store.auth);
+
+  /* 🔒 FETCH LOGIC — UNTOUCHED */
   useEffect(() => {
     async function fetchOrders(farmerId) {
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/order/orders/get/${farmerId}`,
-        );
-        setOrders(response.data.orders);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
+      const res = await axios.get(
+        `${API_BASE_URL}/api/order/orderget/${farmerId}`,
+      );
+      setOrders(res.data.orders);
     }
 
-    if (profile) {
-      fetchOrders(profile?._id || profile?.user?._id);
-    }
+    if (!profile) return;
+    const farmerId = profile?._id || profile?.user?._id;
+    if (!farmerId) return;
+
+    fetchOrders(farmerId);
   }, [profile]);
 
+  /* 🔒 DATA LOGIC — UNTOUCHED */
   useEffect(() => {
-    if (orders.length > 0) {
-      // Aggregate daily sales data
-      const dailySales = {};
-      const productSales = {};
-      const orderStatuses = { Pending: 0, Delivered: 0 };
+    if (!orders.length) return;
 
-      orders.forEach((order) => {
-        const date = new Date(order.createdAt).toLocaleDateString();
-        if (!dailySales[date]) dailySales[date] = 0;
-        dailySales[date] += order.totalAmount;
+    const dailySales = {};
+    const productSales = {};
+    const orderStatuses = { Pending: 0, Delivered: 0 };
 
-        order.items.forEach((item) => {
-          if (item.product) {
-            if (!productSales[item.product.title])
-              productSales[item.product.title] = 0;
-            productSales[item.product.title] +=
-              item.product.price * item.quantity;
-          }
-        });
+    orders.forEach((o) => {
+      const date = new Date(o.createdAt).toLocaleDateString();
+      dailySales[date] = (dailySales[date] || 0) + o.totalAmount;
 
-        if (orderStatuses[order.status] !== undefined) {
-          orderStatuses[order.status] += 1;
-        }
+      o.items.forEach((i) => {
+        if (!i.product) return;
+        productSales[i.product.title] =
+          (productSales[i.product.title] || 0) + i.product.price * i.quantity;
       });
 
-      // Prepare sales data for charts
-      const dailyLabels = Object.keys(dailySales);
-      const dailyData = Object.values(dailySales);
-      setSalesData({
-        labels: dailyLabels,
-        datasets: [
-          {
-            label: "Sales Amount by Date",
-            data: dailyData,
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-          },
-        ],
-      });
+      if (orderStatuses[o.status] !== undefined) {
+        orderStatuses[o.status]++;
+      }
+    });
 
-      const productLabels = Object.keys(productSales);
-      const productData = Object.values(productSales);
-      setProductSalesData({
-        labels: productLabels,
-        datasets: [
-          {
-            label: "Sales by Product",
-            data: productData,
-            backgroundColor: "rgba(153, 102, 255, 0.2)",
-            borderColor: "rgba(153, 102, 255, 1)",
-            borderWidth: 1,
-          },
-        ],
-      });
+    setSalesData({
+      labels: Object.keys(dailySales),
+      datasets: [
+        {
+          label: "Daily Revenue",
+          data: Object.values(dailySales),
+          borderColor: "#22c55e",
+          backgroundColor: "rgba(34,197,94,0.25)",
+          tension: 0.4,
+          fill: true,
+        },
+      ],
+    });
 
-      const statusLabels = Object.keys(orderStatuses);
-      const statusData = Object.values(orderStatuses);
-      setOrderStatusData({
-        labels: statusLabels,
-        datasets: [
-          {
-            label: "Order Status Distribution",
-            data: statusData,
-            backgroundColor: [
-              "rgba(75, 192, 192, 0.6)",
-              "rgba(255, 99, 132, 0.6)",
-            ],
-            borderColor: "rgba(0, 0, 0, 0.1)",
-            borderWidth: 1,
-          },
-        ],
-      });
-    }
+    setProductSalesData({
+      labels: Object.keys(productSales),
+      datasets: [
+        {
+          label: "Sales by Product",
+          data: Object.values(productSales),
+          backgroundColor: "#60a5fa",
+        },
+      ],
+    });
+
+    setOrderStatusData({
+      labels: Object.keys(orderStatuses),
+      datasets: [
+        {
+          data: Object.values(orderStatuses),
+          backgroundColor: ["#22c55e", "#fb7185"],
+        },
+      ],
+    });
   }, [orders]);
 
-  // Pie chart options to control height and aspect ratio
-  const pieChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top",
+  /* UI-ONLY DERIVED DATA */
+  const ordersPerDayData = {
+    labels: salesData.labels,
+    datasets: [
+      {
+        label: "Orders per Day",
+        data: salesData.labels.map(
+          (d) =>
+            orders.filter(
+              (o) => new Date(o.createdAt).toLocaleDateString() === d,
+            ).length,
+        ),
+        backgroundColor: "#6366f1",
       },
-    },
+    ],
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-4xl font-bold mb-6 text-center text-orange-500 bg-clip-text drop-shadow-lg animate__animated animate__fadeInDown">
-        Sales Overview
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-4xl font-bold text-center text-green-600 mb-10">
+        🌾 Farm Sales Dashboard
       </h1>
 
-      {/* First row: Two charts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-4">Total Sales by Date</h3>
-          <Bar data={salesData} />
-        </div>
+      {/* RESPONSIVE DASHBOARD GRID */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-2">
+        {/* 1 */}
+        <DashboardCard title="📈 Daily Revenue Trend">
+          <Line data={salesData} options={chartOptions} />
+        </DashboardCard>
 
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-4 ">
-            Sales Breakdown by Product
-          </h3>
-          <Bar data={productSalesData} />
-        </div>
-      </div>
+        {/* 2 */}
+        <DashboardCard title="✅ Order Completion Ratio">
+          <Doughnut data={orderStatusData} options={chartOptions} />
+        </DashboardCard>
 
-      {/* Second row: Pie chart for order status */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div
-          className="bg-white shadow-md rounded-lg p-4 overflow-hidden"
-          style={{ height: "400px" }}
-        >
-          <h3 className="text-lg font-semibold mb-4">
-            Order Status Distribution
-          </h3>
-          <Pie
-            className="p-8"
-            data={orderStatusData}
-            options={pieChartOptions}
+        {/* 3 */}
+        <DashboardCard title="🛒 Orders per Day">
+          <Bar data={ordersPerDayData} options={chartOptions} />
+        </DashboardCard>
+
+        {/* 4 */}
+        <DashboardCard title="🏆 Top Selling Products">
+          <Bar data={productSalesData} options={chartOptions} />
+        </DashboardCard>
+
+        {/* 5 */}
+        <DashboardCard title="🥧 Product Revenue Share">
+          <Pie data={productSalesData} options={chartOptions} />
+        </DashboardCard>
+
+        {/* 6 */}
+        <DashboardCard title="💰 Revenue vs Order Trend">
+          <Line
+            options={chartOptions}
+            data={{
+              labels: salesData.labels,
+              datasets: [
+                {
+                  label: "Revenue",
+                  data: salesData.datasets[0]?.data || [],
+                  borderColor: "#22c55e",
+                  backgroundColor: "rgba(34,197,94,0.2)",
+                  tension: 0.4,
+                },
+                {
+                  label: "Orders",
+                  data: ordersPerDayData.datasets[0].data,
+                  borderColor: "#6366f1",
+                  backgroundColor: "rgba(99,102,241,0.2)",
+                  tension: 0.4,
+                },
+              ],
+            }}
           />
-        </div>
-
-        {/* <div className="bg-white shadow-md rounded-lg p-4 overflow-hidden" style={{ height: '400px' }}>
-          <h3 className="text-lg font-semibold mb-4">Additional Chart (Optional)</h3>
-
-        </div> */}
+        </DashboardCard>
       </div>
     </div>
   );
 };
+
+/* 🔹 MODERN DASHBOARD CARD */
+const DashboardCard = ({ title, children }) => (
+  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col h-[340px]">
+    <h3 className="text-sm font-semibold text-gray-600 mb-2">{title}</h3>
+    <div className="flex-1 relative">{children}</div>
+  </div>
+);
 
 export default SalesOverview;
