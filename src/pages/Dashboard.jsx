@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthProvider";
+//import { useAuth } from "../context/AuthProvider";
 import Sidebar from "../dashboard/Sidebar";
 import MyProfile from "../dashboard/MyProfile";
 import MyProducts from "../dashboard/MyProducts";
@@ -10,6 +10,7 @@ import Cart from "../dashboard/Cart";
 import { Navigate } from "react-router-dom";
 import FetchCart from "../components/FetchCart";
 import { useSelector } from "react-redux";
+import PlantDiseaseDetection from "./PlantDiseaseDetection";
 
 export default function Dashboard() {
   const profile = useSelector((store) => store.auth.profile);
@@ -49,6 +50,8 @@ export default function Dashboard() {
         <Orders />
       ) : profile?.role === "admin" ? (
         <MyProducts />
+      ) : profile?.role === "admin" ? (
+        <PlantDiseaseDetection />
       ) : (
         <MyProfile />
       )}
