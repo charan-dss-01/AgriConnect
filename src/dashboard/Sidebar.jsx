@@ -11,19 +11,18 @@ import {
 } from "react-icons/bi";
 import { FaClipboardList, FaBoxOpen } from "react-icons/fa";
 import { MdAddBox, MdProductionQuantityLimits } from "react-icons/md";
-import { useAuth } from "../context/AuthProvider";
+import { GiPlantRoots } from "react-icons/gi";
+
+//import { useAuth } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
 import { useDispatch, useSelector } from "react-redux";
 import { authAction } from "../store/authSlice";
-import Cookies from "js-cookie";
-
-
 export default function Sidebar({ setComponent }) {
   const dispatch = useDispatch();
-  const { setIsAuthenticated } = useAuth();
+  //const { setIsAuthenticated } = useAuth();
   const profile = useSelector((store) => store.auth.profile);
 
   const [show, setShow] = useState(false);
@@ -62,6 +61,10 @@ export default function Sidebar({ setComponent }) {
     navigateTo("/sales");
     setShow(false);
   };
+  const gotoPlant = () => {
+    navigateTo("/plant");
+    setShow(false);
+  };
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -70,9 +73,8 @@ export default function Sidebar({ setComponent }) {
         withCredentials: true,
       });
       localStorage.removeItem("jwt");
-      Cookies.remove("jwt", { path: "/" });
       toast.success(data.message);
-      setIsAuthenticated(false);
+      //setIsAuthenticated(false);
       dispatch(authAction.setIsAuthenticated(false));
       dispatch(authAction.setProfile([]));
       navigateTo("/login");
@@ -105,7 +107,7 @@ export default function Sidebar({ setComponent }) {
           {show && (
             <>
               <img
-                className="w-24 h-24 rounded-full mx-auto mt-6 mb-2"
+                className="w-14 h-14 rounded-full mx-auto mt-6 mb-2"
                 src={profile?.user?.photo?.url || profile?.photo?.url}
                 alt="Profile"
               />
@@ -219,7 +221,19 @@ export default function Sidebar({ setComponent }) {
               show ? "bg-red-500 hover:bg-red-700 text-white" : "text-red-500"
             }`}
           >
-            {show ? "HOME" : <BiHome className="text-xl mx-auto" />}
+            {show ? "BACK TO HOME" : <BiHome className="text-xl mx-auto" />}
+          </button>
+          <button
+            onClick={gotoPlant}
+            className={`w-full px-4 py-2 rounded-lg transition duration-300 ${
+              show ? "bg-red-500 hover:bg-red-700 text-white" : "text-red-500"
+            }`}
+          >
+            {show ? (
+              "PLANT DISEASE DETECTION"
+            ) : (
+              <GiPlantRoots className="text-xl mx-auto" />
+            )}
           </button>
           <button
             onClick={gotoChatbot}
