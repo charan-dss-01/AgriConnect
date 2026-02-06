@@ -28,6 +28,8 @@ import AddReview from "./pages/AddReview";
 import Fetch from "./components/Fetch";
 import FetchCart from "./components/FetchCart";
 
+import PlantDiseaseDetection from "./pages/PlantDiseaseDetection";
+
 export default function App() {
   const location = useLocation(); // Use useLocation to get the current path
   const hideNavBarFooter = ["/dashboard", "/register", "/login"].includes(
@@ -60,6 +62,7 @@ export default function App() {
           <Route path="/:productId/review" element={<AddReview />} />
           <Route path="/product/update/:id" element={<UpdateBlog />} />
           <Route path="/product/:id" element={<Detail />} />
+          <Route path="/plant" element={<PlantDiseaseDetection />} />
           <Route path="/cart" element={<Cart />} />{" "}
           {/* Add route for the cart page */}
           <Route path="*" element={<NotFound />} />
